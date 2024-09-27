@@ -1,0 +1,56 @@
+@startuml
+
+actor "User" as User
+participant "MainActivity" as MainActivity
+participant "SportsTimer" as SportsTimer
+participant "RecordActivity" as RecordActivity
+participant "BaiduMap" as BaiduMap
+
+User -> MainActivity: 开始骑行
+activate MainActivity
+MainActivity -> MainActivity: 初始化地图
+MainActivity -> BaiduMap: 设置定位
+activate BaiduMap
+BaiduMap -> BaiduMap: 设置相关控件
+User -> MainActivity: 开始计时
+MainActivity -> MainActivity: 显示计时控件
+MainActivity -> MainActivity: 设置相关控件
+MainActivity -> MainActivity: 开始计时逻辑
+MainActivity -> SportsTimer: start()
+activate SportsTimer
+SportsTimer -> MainActivity: RUNNING状态
+MainActivity -> RecordActivity: 显示骑行数据
+activate RecordActivity
+RecordActivity -> RecordActivity: 读取GPS文件
+RecordActivity -> RecordActivity: 显示骑行信息
+RecordActivity --> MainActivity: 显示骑行信息
+deactivate RecordActivity
+MainActivity --> SportsTimer: RUNNING状态
+deactivate MainActivity
+
+User -> MainActivity: 暂停骑行
+activate MainActivity
+MainActivity -> SportsTimer: pause()
+SportsTimer -> MainActivity: PAUSED状态
+deactivate MainActivity
+
+User -> MainActivity: 恢复骑行
+activate MainActivity
+MainActivity -> SportsTimer: start()
+SportsTimer -> MainActivity: RUNNING状态
+deactivate MainActivity
+
+User -> MainActivity: 结束骑行
+activate MainActivity
+MainActivity -> SportsTimer: reset()
+SportsTimer -> MainActivity: INIT状态
+MainActivity -> RecordActivity: 显示总结信息
+activate RecordActivity
+RecordActivity -> RecordActivity: 读取GPS文件
+RecordActivity -> RecordActivity: 显示总结信息
+RecordActivity --> MainActivity: 显示总结信息
+deactivate RecordActivity
+deactivate MainActivity
+deactivate SportsTimer
+
+@enduml
